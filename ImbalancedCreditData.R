@@ -1,5 +1,6 @@
 library(DMwR) #For smote
 library(ROSE) #For rose
+library(caret)
 
 card.data <- read.csv("creditcard.csv",header=FALSE,sep=",",na.strings = '?')
 card.data <- apply(card.data, 2, function(x) as.numeric(x))
@@ -12,7 +13,7 @@ card.data$Class <- as.factor(card.data$Class)
 levels(card.data$Class) <- c("Ok", "Fraud")
 table(card.data$Class)
 
-inTrainRows <- createDataPartition(card.data$Class,p=0.2,list=FALSE)
+inTrainRows <- createDataPartition(card.data$Class,p=0.8,list=FALSE)
 trainData <- card.data[inTrainRows,]
 testData <-  card.data[-inTrainRows,]
 table(trainData$Class)
@@ -74,6 +75,9 @@ test_roc <- function(model, data) {
                  levels = c("Fraud", "Ok"))
   ci(roc_obj)
 }
+
+ppp<-predict(down_fit, newdata=testData[,-31],type="raw")
+table(ppp,testData)
 
 test <- lapply(models, test_roc, data = testData)
 test <- lapply(test, as.vector)
