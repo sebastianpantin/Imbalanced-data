@@ -22,6 +22,7 @@ aucs <- matrix(0,B,5)
 
 for (i in 1:B) {
 inTrainRows <- createDataPartition(card.data$Class,p=percentage,list=FALSE)
+inTrainRows <- createDataPartition(card.data$Class,p=0.8,list=FALSE)
 trainData <- card.data[inTrainRows,]
 testData <-  card.data[-inTrainRows,]
 testDataY <- card.data[-inTrainRows,31]
@@ -105,6 +106,9 @@ confus <- function(pred, obs) {
 kappa <- function(pred, obs) {
   kappa_obj <- confusionMatrix(pred, obs)$overall[2]
 }
+ppp<-predict(down_fit, newdata=testData[,-31],type="raw")
+table(ppp,testData)
+
 test <- lapply(models, test_roc, data = testData)
 preds <- lapply(models, predicts, data = testData)
 #confusions <- lapply(preds,confus,obs=testDataY)
